@@ -1,0 +1,6 @@
+.venv
+__pycache__
+data/evenements.csv
+data/evenements_propres.csv
+data/meteo_cache.json
+outils

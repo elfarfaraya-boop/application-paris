@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Que faire à Paris maintenant ?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Hanken+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --noir: #0b0b0b; --blanc: #f4f1ea; --gris: #a39e92; --vin: #260f17; --brun: #241a10; --nuit: #0f1c18; --or: #d9b36a; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--noir); color: var(--blanc); font-family: "Hanken Grotesk", sans-serif; font-weight: 400; line-height: 1.5; }
+    a { color: inherit; }
+
+    /* ---------- Première page ---------- */
+    .hero {
+      min-height: 100vh; position: relative; display: flex; flex-direction: column; justify-content: space-between;
+      background:
+        linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.65)),
+        url('{{ url_for("static", filename="paris.jpg") }}') center / cover,
+        linear-gradient(180deg, #151d18 0%, #26382c 55%, #6d5b3d 100%);
+    }
+    .nav { display: flex; justify-content: space-between; align-items: center; padding: 1.6rem 2.2rem; font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; }
+    .nav a { text-decoration: none; }
+    .logo { font-family: "Cormorant Garamond", serif; font-size: 1.4rem; letter-spacing: .38em; font-weight: 500; }
+    .titre { text-align: center; padding: 0 1.5rem; }
+    .titre h1 { font-family: "Cormorant Garamond", serif; font-weight: 400; font-size: clamp(2.8rem, 9vw, 6.2rem); line-height: 1.02; margin: 0 0 1rem; }
+    .titre p { margin: 0 auto; max-width: 30rem; color: #e6e0d2; font-weight: 300; }
+
+    form.filtres { padding: 1.5rem 2.2rem 2.2rem; }
+    .grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.2rem 1.6rem; max-width: 1100px; margin: 0 auto; }
+    label { display: block; font-size: .62rem; letter-spacing: .2em; text-transform: uppercase; color: #cfc9ba; margin-bottom: .25rem; }
+    select, input[name=cp] {
+      width: 100%; background: transparent; color: #fff; font: inherit; border: 0; border-bottom: 1px solid rgba(255,255,255,.7);
+      border-radius: 0; padding: .45rem 0;
+    }
+    select option { color: #111; }
+    input::placeholder { color: #bdb7a8; }
+    select:focus, input:focus { outline: none; border-bottom-color: var(--or); }
+    .actions { display: flex; gap: 2rem; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 1.8rem; }
+    .btn { font: inherit; font-size: .72rem; letter-spacing: .25em; text-transform: uppercase; cursor: pointer; background: transparent; color: #fff; border: 1px solid #fff; padding: .9rem 2.4rem; transition: .25s; }
+    .btn:hover { background: #fff; color: #111; }
+    .lien { font: inherit; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; background: none; border: 0; border-bottom: 1px solid #fff; color: #fff; padding: 0 0 .15rem; }
+    .lien:hover { color: var(--or); border-color: var(--or); }
+    .origine { text-align: center; margin: 1.2rem 0 0; font-size: .82rem; color: #d8d2c4; }
+
+    /* ---------- Cartes ---------- */
+    main { max-width: 1500px; margin: 0 auto; padding: 5rem 1.2rem 3rem; }
+    .titre-section { display: flex; align-items: baseline; gap: .9rem; margin: 0 .3rem 1.4rem; }
+    .titre-section h2 { font-family: "Cormorant Garamond", serif; font-weight: 400; font-size: clamp(2rem, 5vw, 3.2rem); margin: 0; }
+    .titre-section .nb { font-size: .8rem; letter-spacing: .15em; color: var(--gris); }
+    .cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; margin-bottom: 4.5rem; }
+    .carte {
+      position: relative; aspect-ratio: 1 / 1; border-radius: 12px; overflow: hidden; padding: 1.5rem;
+      display: flex; flex-direction: column; justify-content: space-between; background: var(--vin);
+    }
+    .c0 { background: var(--vin); } .c1 { background: var(--brun); } .c2 { background: var(--nuit); }
+    .carte .photo { position: absolute; inset: 0; background-size: cover; background-position: center; transition: transform .6s ease; }
+    .carte.avec-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,.25) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,.8) 100%); }
+    .carte:hover .photo { transform: scale(1.05); }
+    .carte > * { position: relative; z-index: 2; }
+    .carte .lien-carte { position: absolute; inset: 0; z-index: 1; }
+    .haut { display: flex; justify-content: space-between; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--or); }
+    .carte h3 { margin: 0; font-weight: 400; font-size: clamp(1.25rem, 2vw, 1.65rem); line-height: 1.22; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+    .avec-photo h3 { font-size: 1.2rem; font-weight: 500; }
+    .bas { font-size: .82rem; color: #d8d2c4; }
+    .bas .ligne { display: flex; flex-wrap: wrap; gap: .1rem .9rem; margin-bottom: .6rem; }
+    .gratuit, .cours { color: var(--or); font-weight: 600; }
+    .go { position: relative; z-index: 3; text-decoration: none; color: #fff; font-size: .78rem; letter-spacing: .1em; }
+    .go:hover { color: var(--or); }
+    .vide { color: var(--gris); padding: 1rem .3rem 3rem; }
+    .note { color: var(--gris); font-size: .8rem; margin: -3rem .3rem 3rem; }
+    footer { text-align: center; color: var(--gris); font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; padding: 1rem 1rem 3rem; }
+
+    @media (max-width: 640px) { .nav { padding: 1.2rem; } form.filtres { padding: 1rem 1.2rem 1.8rem; } }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <nav class="nav">
+      <span></span>
+      <span class="logo">PARIS</span>
+      <a href="#resultats">Sorties ↓</a>
+    </nav>
+
+    <div class="titre">
+      <h1>Paris.<br>Vivante. Maintenant.</h1>
+      <p>Concerts, ateliers, balades et expositions autour de vous.</p>
+    </div>
+
+    <form method="get" action="#resultats" id="f" class="filtres">
+      <input type="hidden" name="lat" id="lat" value="{{ lat }}">
+      <input type="hidden" name="lon" id="lon" value="{{ lon }}">
+      <div class="grille">
+        <div><label for="cp">Code postal</label><input id="cp" name="cp" placeholder="75011" value="{{ cp }}"></div>
+        <div><label>Rayon</label>
+          <select name="rayon">
+            <option value="">Tout Paris</option>
+            {% for r in ["1", "3", "5", "10"] %}<option value="{{ r }}" {{ "selected" if rayon == r }}>{{ r }} km</option>{% endfor %}
+          </select></div>
+        <div><label>Prix</label>
+          <select name="prix">
+            <option value="">Tous</option>
+            <option value="gratuit" {{ "selected" if prix == "gratuit" }}>Gratuit</option>
+            <option value="payant" {{ "selected" if prix == "payant" }}>Payant</option>
+          </select></div>
+        <div><label>Lieu</label>
+          <select name="lieu">
+            <option value="">Intérieur ou extérieur</option>
+            <option value="interieur" {{ "selected" if lieu == "interieur" }}>Intérieur</option>
+            <option value="exterieur" {{ "selected" if lieu == "exterieur" }}>Extérieur</option>
+          </select></div>
+        <div><label>Thème</label>
+          <select name="theme">
+            <option value="">Tous les thèmes</option>
+            {% for t in themes %}<option value="{{ t }}" {{ "selected" if theme == t }}>{{ t }}</option>{% endfor %}
+          </select></div>
+      </div>
+      <div class="actions">
+        <button class="btn" type="submit">Voir les sorties</button>
+        <button class="lien" type="button" onclick="localiser()">Me localiser</button>
+      </div>
+      {% if origine %}<p class="origine">Distances depuis : {{ origine }}</p>{% endif %}
+    </form>
+  </header>
+
+  <script>
+    function localiser() {
+      if (!navigator.geolocation) { alert("Géolocalisation indisponible."); return; }
+      navigator.geolocation.getCurrentPosition(
+        function (p) {
+          document.getElementById("lat").value = p.coords.latitude;
+          document.getElementById("lon").value = p.coords.longitude;
+          document.getElementById("cp").value = "";
+          document.getElementById("f").submit();
+        },
+        function () { alert("Position refusée ou indisponible. Utilise le code postal."); }
+      );
+    }
+  </script>
+
+  {% macro carte(e, i) %}
+    {% set j = e.horaire.split(' ')[0].split('/') %}
+    {% set h = e.horaire.split(' ')[1] %}
+    {% set mois = ["", "janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."] %}
+    {% set c = e.cp|string %}
+    <article class="carte c{{ i % 3 }} {{ 'avec-photo' if e.image }}">
+      {% if e.image %}<div class="photo" style="background-image:url('{{ e.image }}')"></div>{% endif %}
+      <a class="lien-carte" href="{{ e.url }}" target="_blank" rel="noopener" aria-label="{{ e.title }}"></a>
+      <div class="haut"><span>{{ j[0] }} {{ mois[j[1]|int] }} · {{ h }}</span>{% if e.en_cours %}<span class="cours">● En cours</span>{% endif %}</div>
+      <h3>{{ e.title }}</h3>
+      <div class="bas">
+        <div class="ligne">
+          {% if c[:2] == "75" and c|length >= 5 %}{% set n = c[3:5]|int %}<span>Paris {{ n }}{{ "er" if n == 1 else "e" }}</span>{% elif c %}<span>{{ c }}</span>{% endif %}
+          {% if e.distance %}<span>{{ e.distance }}</span>{% endif %}
+          {% if e.prix == "gratuit" %}<span class="gratuit">Gratuit</span>{% else %}<span>{{ e.prix }}</span>{% endif %}
+          {% if e.meteo %}<span>{{ e.meteo }}{% if e.exterieur %} · plein air{% endif %}</span>{% endif %}
+        </div>
+        {% if e.itineraire %}<a class="go" href="{{ e.itineraire }}" target="_blank" rel="noopener">Y aller ↗</a>{% endif %}
+      </div>
+    </article>
+  {% endmacro %}
+
+  <main id="resultats">
+    <div class="titre-section"><h2>Sorties</h2><span class="nb">{{ nb_sorties }}</span></div>
+    <div class="cartes">
+      {% for e in sorties %}{{ carte(e, loop.index0) }}{% endfor %}
+    </div>
+    {% if not sorties %}<p class="vide">Aucune sortie avec ces filtres. Essaie d'élargir le rayon.</p>{% endif %}
+    {% if nb_sorties > 100 %}<p class="note">Les 100 premières sorties sont affichées.</p>{% endif %}
+
+    <div class="titre-section"><h2>Expositions</h2><span class="nb">{{ nb_expos }}</span></div>
+    <div class="cartes">
+      {% for e in expos %}{{ carte(e, loop.index0) }}{% endfor %}
+    </div>
+    {% if not expos %}<p class="vide">Aucune exposition avec ces filtres.</p>{% endif %}
+    {% if nb_expos > 100 %}<p class="note">Les 100 premières expositions sont affichées.</p>{% endif %}
+  </main>
+
+  <footer>Données Ville de Paris · Météo Open-Meteo</footer>
+</body>
+</html>
