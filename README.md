@@ -36,3 +36,6 @@ python app.py           # http://localhost:5000
 
 Sous WSL avec Podman, si la page ne répond pas : `docker run -d --network host que-faire-paris`
 Version de Python : 3.14
+
+Sous WSL avec Podman, si la page ne répond pas : `docker run -d --network host que-faire-paris`
+Version de Python : 3.14
