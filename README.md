@@ -39,3 +39,9 @@ Version de Python : 3.14
 
 Sous WSL avec Podman, si la page ne répond pas : `docker run -d --network host que-faire-paris`
 Version de Python : 3.14
+
+## Récupérer le projet
+```bash
+git clone https://github.com/elfarfaraya-boop/application-paris.git
+cd application-paris
+```
